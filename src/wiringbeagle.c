@@ -33,7 +33,7 @@ int pinMode(int pin, short mode) {
     
     switch(mode) {
         case OUTPUT: {
-            FILE* fexport;
+            FILE* fexport, *fdirection;
 //            char* path = "/sys/class/gpio";
             char* direction_path = (char *) malloc(30*sizeof(char));
             char* export_path = "/sys/class/gpio/export";
@@ -50,26 +50,25 @@ int pinMode(int pin, short mode) {
             } else {
                 fputs(itostr(pin), fexport);
             }
-	    
             fclose(fexport);
 	    
-	    // waits for OS to export folder
-	    sleep(1);
-            
+            // waits for OS to export folder
+            sleep(1);
             
             // sets pin to output
-            fexport = fopen(direction_path, "w");
-            if (fexport == NULL) {
+            fdirection = fopen(direction_path, "w");
+            if (fdirection == NULL) {
                 printf("Unable to open path %s\n", direction_path);
                 return -1;
             } else {
-                fputs("out", fexport);
+                fputs("out", fdirection);
             }
-            fclose(fexport);
+            fclose(fdirection);
+            free(direction_path);
             break;
             
         } case INPUT: {
-            FILE* fexport;
+            FILE* fexport, *fdirection;
             char* export_path = "/sys/class/gpio/export";
             char* direction_path = (char *)malloc(30*sizeof(char));
             
@@ -88,15 +87,15 @@ int pinMode(int pin, short mode) {
             fclose(fexport);
             
             // sets pin to be an input
-            fexport = fopen(direction_path, "w");
-            if (fexport == NULL) {
+            fdirection = fopen(direction_path, "w");
+            if (fdirection == NULL) {
                 printf("Unable to open path %s\n", direction_path);
                 return -1;
             } else {
-                fputs("in", fexport);
+                fputs("in", fdirection);
             }
-            fclose(fexport);
-	    free(direction_path);
+            fclose(fdirection);
+            free(direction_path);
             break;
             
         } case UNEXPORT: {
