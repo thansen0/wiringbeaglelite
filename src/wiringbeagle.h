@@ -1,10 +1,11 @@
 
-#ifndef I2C_INTERFACE_HPP
-#define I2C_INTERFACE_HPP
+#ifndef GPIO_BBB_INTERFACE_H
+#define GPIO_BBB_INTERFACE_H
 
 #include <stdio.h>
 #include <stdlib.h> // malloc
 #include <string.h> // strcat and strcpy
+#include <unistd.h> // sllep
 
 #define OUTPUT 1
 #define INPUT 2

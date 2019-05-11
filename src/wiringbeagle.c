@@ -50,8 +50,12 @@ int pinMode(int pin, short mode) {
             } else {
                 fputs(itostr(pin), fexport);
             }
-            
+	    
             fclose(fexport);
+	    
+	    // waits for OS to export folder
+	    sleep(1);
+            
             
             // sets pin to output
             fexport = fopen(direction_path, "w");
@@ -62,7 +66,6 @@ int pinMode(int pin, short mode) {
                 fputs("out", fexport);
             }
             fclose(fexport);
-            free(fexport);
             break;
             
         } case INPUT: {
@@ -93,7 +96,7 @@ int pinMode(int pin, short mode) {
                 fputs("in", fexport);
             }
             fclose(fexport);
-            free(fexport);
+	    free(direction_path);
             break;
             
         } case UNEXPORT: {
@@ -113,7 +116,6 @@ int pinMode(int pin, short mode) {
             fclose(f_unexport);
             
             free(unexport_path);
-            free(f_unexport);
             
             break;
             
@@ -151,15 +153,16 @@ int digitalWrite(int pin, short type) {
     
     printf("Writing value %s\n", value);
     if (fvalue != NULL) {
-        fputs(value, fvalue);
+    	printf("Writing value %s\n", value);
+    	fputs(value, fvalue);
     } else {
         printf("Unable to open vale file at %s; are you sure gpio pin was initialized?\n", value_path);
         return -1;
     }
-    
+   
+    fclose(fvalue);
     free(value_path);
     free(value);
-    free(fvalue);
     
     return 0; // success
 }
@@ -202,14 +205,14 @@ int digitalRead(int pin) {
     return -1; // shouldn't have gotten this far
 }
 
-int main() {
+// int main() {
     
-    printf("Starting digitalWrite\n");
+   // printf("Starting digitalWrite\n");
     
 //    pinMode(67, OUTPUT);
 //    digitalWrite(67, LOW);
     
-    printf("Completed digitalWrite()\n");
+    //printf("Completed digitalWrite()\n");
     
-    return 0;
-}
+    //return 0;
+//}
