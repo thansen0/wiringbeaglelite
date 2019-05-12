@@ -33,30 +33,34 @@ int pinMode(int pin, short mode) {
     
     switch(mode) {
         case OUTPUT: {
-            FILE* fexport, *fdirection;
-//            char* path = "/sys/class/gpio";
-            char* direction_path = (char *) malloc(30*sizeof(char));
-            char* export_path = "/sys/class/gpio/export";
+            FILE *fexport, *fdirection;
+            char *direction_path = (char *) malloc(30*sizeof(char));
+            char *export_path = "/sys/class/gpio/export";
             
             strcpy(direction_path, "/sys/class/gpio/gpio");
             strcat(direction_path, itostr(pin));
             strcat(direction_path, "/direction");
+           
+	    fdirection = fopen(direction_path, "w");
+
+	    // export pin if it doesn't exist
+	    if (fdirection == NULL) {
+
+            	// creates folder structure for pin
+            	fexport = fopen(export_path, "w");
+            	if (fexport == NULL) {
+                	printf("Unable to open path %s\n", export_path);
+                	return -1;
+            	} else {
+                	fputs(itostr(pin), fexport);
+			fclose(fexport);
+            	}
+	   
+	       	sleep(1);
+            	fdirection = fopen(direction_path, "w");
+	    }
             
-            // creates folder structure for pin
-            fexport = fopen(export_path, "w");
-            if (fexport == NULL) {
-                printf("Unable to open path %s\n", export_path);
-                return -1;
-            } else {
-                fputs(itostr(pin), fexport);
-            }
-            fclose(fexport);
-	    
-            // waits for OS to export folder
-            sleep(1);
-            
-            // sets pin to output
-            fdirection = fopen(direction_path, "w");
+	    // sets pin to output
             if (fdirection == NULL) {
                 printf("Unable to open path %s\n", direction_path);
                 return -1;
@@ -76,18 +80,25 @@ int pinMode(int pin, short mode) {
             strcat(direction_path, itostr(pin));
             strcat(direction_path, "/direction");
             
-            // creates folder structure for pin
-            fexport = fopen(export_path, "w");
-            if (fexport == NULL) {
-                printf("Unable to open path %s\n", export_path);
-                return -1;
-            } else {
-                fputs(itostr(pin), fexport);
-            }
-            fclose(fexport);
-            
+	    // ensure pin isn't already exported
+	    fdirection = fopen(direction_path, "w");
+
+	    if (fdirection == NULL) {
+            	// creates folder structure for pin
+            	fexport = fopen(export_path, "w");
+            	if (fexport == NULL) {
+			printf("Unable to open path %s\n", export_path);
+                	return -1;
+            	} else {
+                	fputs(itostr(pin), fexport);
+            		fclose(fexport);
+		}
+           	sleep(1); 
+            	fdirection = fopen(direction_path, "w");
+	    }
+
             // sets pin to be an input
-            fdirection = fopen(direction_path, "w");
+           // fdirection = fopen(direction_path, "w");
             if (fdirection == NULL) {
                 printf("Unable to open path %s\n", direction_path);
                 return -1;
@@ -128,11 +139,12 @@ int pinMode(int pin, short mode) {
 
 int digitalWrite(int pin, short type) {
     
-    FILE *fvalue;
+    FILE* fvalue;
     char* value_path = (char*) malloc(30*sizeof(char));
-    char *value = (char*) malloc(sizeof(char));
-    *value = type + '0';
-    
+    //char *value = (char*) malloc(sizeof(char));
+    //*value = type + '0';
+    char* value = itostr((int)type);
+
     if (!verifyPin(pin)) {
         printf("Invalid pin (%i)\n", pin);
         return -1;
@@ -150,7 +162,6 @@ int digitalWrite(int pin, short type) {
     
     fvalue = fopen(value_path, "w");
     
-    printf("Writing value %s\n", value);
     if (fvalue != NULL) {
     	printf("Writing value %s\n", value);
     	fputs(value, fvalue);
