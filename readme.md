@@ -1,5 +1,4 @@
 # WiringBeagle Lite
-### Note: not finished, I haven't finished the digitalRead function. Feel free to use the code or do whatever you want with it though, I'll try to finish it later this week
 
 Despite it's popularity and age, I wasn't able to find an easy to use GPIO for the beaglebone, so wrote my own. This would probably work on a lot of debian-based boards with GPIO pins (including raspberry pi) however I haven't tested it with them.
 
@@ -27,7 +26,7 @@ There's an example in the example.c file and here's one in code:
 
 ```
 #include <unistd.h> // for sleep function
-#include "wiringbeagle.h"
+#include "src/wiringbeagle.h" // if the .h and .c files are in the same folder no need for src/
 
 int main() {
 

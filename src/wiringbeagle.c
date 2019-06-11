@@ -179,8 +179,8 @@ int digitalWrite(int pin, short type) {
 
 int digitalRead(int pin) {
     
-    if (pin < 118) {
-        printf("FUNCTION NOT FINISHED\n");
+    if (!verifyPin(pin)) {
+        printf("Invalid pin %i\n", pin);
         return -1;
     }
     
@@ -198,20 +198,36 @@ int digitalRead(int pin) {
     strcat(value_path, itostr(pin));
     strcat(value_path, "/value");
     
-    fvalue = fopen(value_path, "w");
+    fvalue = fopen(value_path, "r");
     
     if (fvalue != NULL) {
         // Read value from file, return HIGH or LOW
-        
-        
+        int readValue;
+	fscanf(fvalue, "%d", &readValue);
+
+	if (readValue == 0) {
+		free(value_path);
+		free(value);
+		fclose(fvalue);
+		return LOW;
+	} else if(readValue > 0) {
+		free(value_path);
+		free(value);
+		fclose(fvalue);
+		return HIGH;
+	}
+
     } else {
+	free(value_path);
+	free(value);
+	fclose(fvalue);
         printf("Unable to open vale file at %s; are you sure gpio pin was initialized?\n", value_path);
         return -1;
     }
     
     free(value_path);
     free(value);
-    free(fvalue);
+    fclose(fvalue);
     return -1; // shouldn't have gotten this far
 }
 

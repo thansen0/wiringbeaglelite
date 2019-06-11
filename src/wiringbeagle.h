@@ -39,7 +39,10 @@ int pinMode(int pin, short mode);
  */
 int digitalWrite(int pin, short type);
 
-// Not implemented yet
+/*
+ * Returns either HIGH or LOW (0) depending on what
+ * is read in at the pin value
+ */
 int digitalRead(int pin);
 
 #endif
