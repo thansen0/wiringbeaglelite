@@ -28,6 +28,7 @@
  *	OUTPUT
  *	INPUT
  * 	UNEXPORT
+ *
  */
 int pinMode(int pin, short mode);
 
@@ -44,5 +45,16 @@ int digitalWrite(int pin, short type);
  * is read in at the pin value
  */
 int digitalRead(int pin);
+
+/*
+ * Sets a PWM value with a default period of 255, 
+ * returns -1 if it encounters an error
+ */
+int analogWrite(int pin, int duty_cycle);
+
+/* Sets a PWM value where you choose the period
+ * and the duty cycle.
+ */
+int analogWrite(int pin, int period, int duty_cycle);
 
 #endif

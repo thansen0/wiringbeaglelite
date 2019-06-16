@@ -24,6 +24,22 @@ short verifyPin(int pin) {
     return pin < 118;
 }
 
+short verifyPWMPin(int pin) {
+	// disregarding P8 and P9 since they don't overlap
+	int PWM_pins[] = {14, 16, 21, 22, 42, 13, 19};
+	int len = sizeof(PWM_pins)/sizeof(int);
+
+	for (int i = 0; i < len; ++i) {
+		if (PWM_pins[i] == pin) {
+			// valud PWM pin 
+			return true;
+		}
+	}
+
+	// found no valid pins, return false
+	return false;
+}
+
 int pinMode(int pin, short mode) {
     
     if (!verifyPin(pin)) {
@@ -229,6 +245,34 @@ int digitalRead(int pin) {
     free(value);
     fclose(fvalue);
     return -1; // shouldn't have gotten this far
+}
+
+int analogWrite(int pin, int period, int duty_cycle) {
+	// verify pin
+	if(!verifyPWMPin(pin)) {
+		printf("Invalid PWM pin\n");
+		return -1;
+	}
+
+	// initialize filepath variabiles
+	
+
+	// build file path
+	
+
+	// ensure files exist by opening them
+	
+
+	// write period and duty_cycle
+	
+
+	// close files and free memory
+
+}
+
+int analogWrite(int pin, int duty_cycle) {
+	// calls full analogWrite function
+	return analogWrite(pin, 255, duty_cycle);
 }
 
 // int main() {
