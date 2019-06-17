@@ -172,27 +172,27 @@ int pinMode(int pin, short mode) {
                 pwm_meta[1].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:1";
                 pwm_meta[1].pin_number = 16;
                 pwm_meta[1].export_number = 1;
-                pwm_meta[1].exported = -1; // false
+                pwm_meta[1].exported = -1;
             
                 pwm_meta[2].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:1";
                 pwm_meta[2].pin_number = 21;
                 pwm_meta[2].export_number = 1;
-                pwm_meta[2].exported = -1; // false
+                pwm_meta[2].exported = -1;
             
                 pwm_meta[3].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:0";
                 pwm_meta[3].pin_number = 22;
                 pwm_meta[3].export_number = 0;
-                pwm_meta[3].exported = -1; // false
+                pwm_meta[3].exported = -1;
             
                 pwm_meta[4].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-4:1";
                 pwm_meta[4].pin_number = 13;
                 pwm_meta[4].export_number = 1;
-                pwm_meta[4].exported = -1; // false
+                pwm_meta[4].exported = -1;
             
                 pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-4:0";
                 pwm_meta[5].pin_number = 19;
                 pwm_meta[5].export_number = 0;
-                pwm_meta[5].exported = -1; // false
+                pwm_meta[5].exported = -1;
             }
 
             // get index, check if folder exists
