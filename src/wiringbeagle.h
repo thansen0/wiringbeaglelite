@@ -21,10 +21,6 @@
 // suspicious amount of ram dissapear
 // char* itostr(int n);
 
-// returns a 0 or 1 based on whether the pin lies
-// within the predicted range for the beaglebone black
-// short verifyPin(int pin);
-
 /* Sets the pin mod for the pin. Acceptable modes are
  *	OUTPUT
  *	INPUT
@@ -54,7 +50,7 @@ int digitalRead(int pin);
 int analogWrite(int pin, int duty_cycle);
 
 /* Sets a PWM value where you choose the period
- * and the duty cycle.
+ * and the duty cycle. Returns -1 if there is an error
  */
 int analogWrite2(int pin, int period, int duty_cycle);
 

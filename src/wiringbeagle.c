@@ -25,15 +25,16 @@ char* itostr(int n) {
 }
 
 short verifyPin(int pin) {
-	int GPIO_pin_numbers[] = {30, 31, 48, 4, 3, 49, 117, 125, 121, 120,
+	int GPIO_pin_numbers[] = {
+        30, 31, 48, 4, 3, 49, 117, 125, 121, 120,
 		20, 60, 40, 51, 5, 2, 15, 14, 123, 122,
-	        7, 38, 34, 66, 69, 45, 23, 47, 27, 22, 
+        7, 38, 34, 66, 69, 45, 23, 47, 27, 22,
 		62, 36, 32, 86, 87, 10, 9, 8, 78, 76,
 		74, 72, 70, 39, 35, 67, 68, 44, 26, 46,
 		65, 63, 37, 33, 61, 88, 89, 11, 81, 80, 
 		79, 77, 75, 73, 71
 	};
-	
+    
 	int len = sizeof(GPIO_pin_numbers)/sizeof(int);
 
 	for (int i = 0; i < len; ++i) {
@@ -78,7 +79,7 @@ int getPWMIndex(int pin) {
 int pinMode(int pin, short mode) {
     
     if (!verifyPin(pin)) {
-        printf("Invalid pin (%i)\n", pin);
+        printf("Invalid pin %i\n", pin);
         return -1;
     }
     
@@ -92,10 +93,10 @@ int pinMode(int pin, short mode) {
             strcat(direction_path, itostr(pin));
             strcat(direction_path, "/direction");
            
-	    fdirection = fopen(direction_path, "w");
+            fdirection = fopen(direction_path, "w");
 
-	    // export pin if it doesn't exist
-	    if (fdirection == NULL) {
+            // export pin if it doesn't exist
+            if (fdirection == NULL) {
 
             	// creates folder structure for pin
             	fexport = fopen(export_path, "w");
@@ -104,14 +105,14 @@ int pinMode(int pin, short mode) {
                 	return -1;
             	} else {
                 	fputs(itostr(pin), fexport);
-			fclose(fexport);
+                    fclose(fexport);
             	}
 	   
-	       	sleep(1);
+                sleep(1);
             	fdirection = fopen(direction_path, "w");
-	    }
+            }
             
-	    // sets pin to output
+            // sets pin to output
             if (fdirection == NULL) {
                 printf("Unable to open path %s\n", direction_path);
                 return -1;
@@ -131,25 +132,26 @@ int pinMode(int pin, short mode) {
             strcat(direction_path, itostr(pin));
             strcat(direction_path, "/direction");
             
-	    // ensure pin isn't already exported
-	    fdirection = fopen(direction_path, "w");
+            // ensure pin isn't already exported
+            fdirection = fopen(direction_path, "w");
 
-	    if (fdirection == NULL) {
-            	// creates folder structure for pin
-            	fexport = fopen(export_path, "w");
-            	if (fexport == NULL) {
-			printf("Unable to open path %s\n", export_path);
-                	return -1;
-            	} else {
-                	fputs(itostr(pin), fexport);
-            		fclose(fexport);
-		}
-           	sleep(1); 
-            	fdirection = fopen(direction_path, "w");
-	    }
+            if (fdirection == NULL) {
+                    // creates folder structure for pin
+                fexport = fopen(export_path, "w");
+                if (fexport == NULL) {
+                printf("Unable to open path %s\n", export_path);
+                    return -1;
+                } else {
+                    fputs(itostr(pin), fexport);
+                    fclose(fexport);
+                }
+                sleep(1);
+                fdirection = fopen(direction_path, "w");
+                
+            }
 
             // sets pin to be an input
-           // fdirection = fopen(direction_path, "w");
+            // fdirection = fopen(direction_path, "w");
             if (fdirection == NULL) {
                 printf("Unable to open path %s\n", direction_path);
                 return -1;
@@ -160,62 +162,62 @@ int pinMode(int pin, short mode) {
             free(direction_path);
             break;
 
-	} case PWMOUTPUT: {
-		if (pwm_meta == NULL) {
-			pwm_meta[0].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:0";
-        	   	pwm_meta[0].pin_number = 14;
-	       		pwm_meta[0].export_number = 0;
-			pwm_meta[0].exported = -1; // false
-		
-			pwm_meta[1].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:1";
-        	   	pwm_meta[1].pin_number = 16;
-		       	pwm_meta[1].export_number = 1;
-			pwm_meta[1].exported = -1; // false
-		
-			pwm_meta[2].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:1";
-        	   	pwm_meta[2].pin_number = 21;
-	       		pwm_meta[2].export_number = 1;
-			pwm_meta[2].exported = -1; // false
-		
-			pwm_meta[3].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:0";
-	           	pwm_meta[3].pin_number = 22;
-		       	pwm_meta[3].export_number = 0;
-			pwm_meta[3].exported = -1; // false
-		
-			// This one isn't listed in the example docs
-			pwm_meta[4].path = "/sys/devices/platform/ocp/48303000.epwmss/48303200.pwm/pwm/pwmchip3/pwm-3:0";
-        	   	pwm_meta[4].pin_number = 42;
-		       	pwm_meta[4].export_number = 0;
-			pwm_meta[4].exported = -1; // false
-		
-			pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:1";
-        	   	pwm_meta[5].pin_number = 13;
-	       		pwm_meta[5].export_number = 1;
-			pwm_meta[5].exported = -1; // false
-		
-			pwm_meta[6].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:0";
-	           	pwm_meta[6].pin_number = 19;
-		       	pwm_meta[6].export_number = 0;
-			pwm_meta[6].exported = -1; // false
-		}
+        } case PWMOUTPUT: {
+            if (pwm_meta == NULL) {
+                pwm_meta[0].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:0";
+                pwm_meta[0].pin_number = 14;
+                pwm_meta[0].export_number = 0;
+                pwm_meta[0].exported = -1; // false
+            
+                pwm_meta[1].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:1";
+                pwm_meta[1].pin_number = 16;
+                pwm_meta[1].export_number = 1;
+                pwm_meta[1].exported = -1; // false
+            
+                pwm_meta[2].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:1";
+                pwm_meta[2].pin_number = 21;
+                pwm_meta[2].export_number = 1;
+                pwm_meta[2].exported = -1; // false
+            
+                pwm_meta[3].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:0";
+                pwm_meta[3].pin_number = 22;
+                pwm_meta[3].export_number = 0;
+                pwm_meta[3].exported = -1; // false
+            
+                // This one isn't listed in the example docs
+                pwm_meta[4].path = "/sys/devices/platform/ocp/48303000.epwmss/48303200.pwm/pwm/pwmchip3/pwm-3:0";
+                pwm_meta[4].pin_number = 42;
+                pwm_meta[4].export_number = 0;
+                pwm_meta[4].exported = -1; // false
+            
+                pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:1";
+                pwm_meta[5].pin_number = 13;
+                pwm_meta[5].export_number = 1;
+                pwm_meta[5].exported = -1; // false
+            
+                pwm_meta[6].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:0";
+                pwm_meta[6].pin_number = 19;
+                pwm_meta[6].export_number = 0;
+                pwm_meta[6].exported = -1; // false
+            }
 
-		// get index, check if folder exists
-		int index = getPWMIndex(pin);
-		FILE* tmp = fopen(strcat(pwm_meta[index].path, "/period"), "r");
+            // get index, check if folder exists
+            int index = getPWMIndex(pin);
+            FILE* tmp = fopen(strcat(pwm_meta[index].path, "/period"), "r");
 
-		if (!tmp) {
-			// file does not exist
-			printf("Folder must be exported, but I haven't implemented this yet because I'm a moron\n");
-			printf("I should push it in the next few days, otherwise feel free to export it manually\n");
-			return -1;
-		} else if (index == 4) {
-			printf("This pin isn't implemented yet, I'd just use a different pin\n");
-			return -1;
-		}
+            if (!tmp) {
+                // file does not exist
+                printf("Folder must be exported, but I haven't implemented this yet because I'm a moron\n");
+                printf("I should push it in the next few days, otherwise feel free to export it manually\n");
+                return -1;
+            } else if (index == 4) {
+                printf("This pin isn't implemented yet, I'd just use a different pin\n");
+                return -1;
+            }
 
-		pwm_meta[index].exported = 0;
-		fclose(tmp);
-		break;
+            pwm_meta[index].exported = 0;
+            fclose(tmp);
+            break;
 
         } case UNEXPORT: {
             FILE* f_unexport;
@@ -231,10 +233,9 @@ int pinMode(int pin, short mode) {
                 printf("Unable to open unexport file at %s\n", unexport_path);
                 return -1;
             }
+            
             fclose(f_unexport);
-            
             free(unexport_path);
-            
             break;
             
         } default: {
