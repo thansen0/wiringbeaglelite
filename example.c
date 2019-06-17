@@ -34,4 +34,21 @@ int main() {
 	printf("digitalRead in is 0: %i\n", in);
 
 	pinMode(pin, UNEXPORT);
+
+	printf("Modifying PWM pins now");
+
+	int pwm = 14;
+	pinMode(pwm, PWMOUTPUT);
+
+	analogWrite(pwm, 127);
+
+	sleep(3);
+
+	analogWrite(pwm, 255);
+
+	sleep(3);
+
+	analogWrite(pwm, 0);
+
+	sleep(1);
 }
