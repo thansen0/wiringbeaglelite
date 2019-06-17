@@ -28,7 +28,7 @@ short verifyPin(int pin) {
 	int GPIO_pin_numbers[] = {
         30, 31, 48, 4, 3, 49, 117, 125, 121, 120,
 		20, 60, 40, 51, 5, 2, 15, 14, 123, 122,
-        7, 38, 34, 66, 69, 45, 23, 47, 27, 22,
+		7, 38, 34, 66, 69, 45, 23, 47, 27, 22,
 		62, 36, 32, 86, 87, 10, 9, 8, 78, 76,
 		74, 72, 70, 39, 35, 67, 68, 44, 26, 46,
 		65, 63, 37, 33, 61, 88, 89, 11, 81, 80, 
@@ -50,7 +50,7 @@ short verifyPin(int pin) {
 
 short verifyPWMPin(int pin) {
 	// disregarding P8 and P9 since they don't overlap
-	int PWM_pin_numbers[] = {14, 16, 21, 22, 42, 13, 19};
+	int PWM_pin_numbers[] = {14, 16, 21, 22, 13, 19};
 	int len = sizeof(PWM_pin_numbers)/sizeof(int);
 
 	for (int i = 0; i < len; ++i) {
@@ -184,21 +184,15 @@ int pinMode(int pin, short mode) {
                 pwm_meta[3].export_number = 0;
                 pwm_meta[3].exported = -1; // false
             
-                // This one isn't listed in the example docs
-                pwm_meta[4].path = "/sys/devices/platform/ocp/48303000.epwmss/48303200.pwm/pwm/pwmchip3/pwm-3:0";
-                pwm_meta[4].pin_number = 42;
-                pwm_meta[4].export_number = 0;
+                pwm_meta[4].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-4:1";
+                pwm_meta[4].pin_number = 13;
+                pwm_meta[4].export_number = 1;
                 pwm_meta[4].exported = -1; // false
             
-                pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:1";
-                pwm_meta[5].pin_number = 13;
-                pwm_meta[5].export_number = 1;
+                pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-4:0";
+                pwm_meta[5].pin_number = 19;
+                pwm_meta[5].export_number = 0;
                 pwm_meta[5].exported = -1; // false
-            
-                pwm_meta[6].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:0";
-                pwm_meta[6].pin_number = 19;
-                pwm_meta[6].export_number = 0;
-                pwm_meta[6].exported = -1; // false
             }
 
             // get index, check if folder exists

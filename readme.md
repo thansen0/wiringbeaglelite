@@ -14,7 +14,7 @@ My goal with this code is just to save people the few hours it takes to learn wh
 
 ## What's coming
 
-I'm currently adding PWM functionality. The functionality is designed to work with post-linux kernel 4.14, as beagblebone changed the implementation, breaking many of the currentPWM libraries. This functionality isn't quite finished, as pin 42 won't work and I'm still having tenative issues with a few pins. PWM functions are in this current version however it should be fully up and running in the next week or two.
+I'm currently adding PWM functionality. The functionality is designed to work with post-linux kernel 4.14, as beagblebone changed the implementation, breaking many of the currentPWM libraries. This functionality isn't quite finished, as pin 42 won't work (it's not build using the same hardward overlay) and I'm still having version issues with a few pins. PWM functions are in this current version however it should be fully up and running in the next week or two.
 
 ## How to install it
 
@@ -52,7 +52,7 @@ int main() {
 
 ```
 
-## How to use the PWM pins (unfinished!)
+## How to use the PWM pins (unfinished but may work for you)
 
 The PWM pins also work in a similar mannar to arduino boards. The user must export the pin first using `pinMode(pin, PWMOUTPUT)`, and then they may using `analogWrite(pin, duty_cycle)`, which is out of a period of 255.
 
@@ -75,4 +75,8 @@ int main() {
 }
 
 ```
+
+## Troubleshooting the PWM pins
+
+Most of the issues that come with the PWM pins is that depending on the version you get a different file path, and so far I'm not sure how to tell which is which. If you're having problems with the PWM functionality not working, you can check out [this guide](https://github.com/beagleboard/bb.org-overlays/blob/master/examples/cape-unversal-pwm.txt) and [this one](https://stackoverflow.com/questions/50203064/pwm-on-beaglebone-black-v4-14) which are effectively how I'm doing it in the code. You can simply check where your files are and changed the hardcoded file-urls.
 
