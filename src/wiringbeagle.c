@@ -1,16 +1,20 @@
-//#include <stdio.h>
-//#include <stdlib.h> // malloc
-//#include <string.h> // strcat and strcpy
-//
-//#define OUTPUT 1
-//#define INPUT 2
-//#define P____INPUT 3 // NOT IMPLENTED
-//#define UNEXPORT 4
-//
-//#define HIGH 1
-//#define LOW 0
+/*
+ * Wiringbeaglelite, 2019
+ * Created By Thomas Hansen
+ *
+ */
 
 #include "wiringbeagle.h"
+
+struct PWM_pin {
+	int pin_number;
+	int export_number;
+	int exported;
+	char* path;
+};
+
+// Define in a function
+struct PWM_pin pwm_meta[7];
 
 char* itostr(int n) {
     // assumes value is smaller than 1000
@@ -21,23 +25,54 @@ char* itostr(int n) {
 }
 
 short verifyPin(int pin) {
-    return pin < 118;
-}
-
-short verifyPWMPin(int pin) {
-	// disregarding P8 and P9 since they don't overlap
-	int PWM_pins[] = {14, 16, 21, 22, 42, 13, 19};
-	int len = sizeof(PWM_pins)/sizeof(int);
+	int GPIO_pin_numbers[] = {30, 31, 48, 4, 3, 49, 117, 125, 121, 120,
+		20, 60, 40, 51, 5, 2, 15, 14, 123, 122,
+	        7, 38, 34, 66, 69, 45, 23, 47, 27, 22, 
+		62, 36, 32, 86, 87, 10, 9, 8, 78, 76,
+		74, 72, 70, 39, 35, 67, 68, 44, 26, 46,
+		65, 63, 37, 33, 61, 88, 89, 11, 81, 80, 
+		79, 77, 75, 73, 71
+	};
+	
+	int len = sizeof(GPIO_pin_numbers)/sizeof(int);
 
 	for (int i = 0; i < len; ++i) {
-		if (PWM_pins[i] == pin) {
-			// valud PWM pin 
-			return true;
+		if (GPIO_pin_numbers[i] == pin) {
+			// valud GPIO pin, return true 
+			return 0;
 		}
 	}
 
 	// found no valid pins, return false
-	return false;
+	return -1;
+}
+
+short verifyPWMPin(int pin) {
+	// disregarding P8 and P9 since they don't overlap
+	int PWM_pin_numbers[] = {14, 16, 21, 22, 42, 13, 19};
+	int len = sizeof(PWM_pin_numbers)/sizeof(int);
+
+	for (int i = 0; i < len; ++i) {
+		if (PWM_pin_numbers[i] == pin) {
+			// valud PWM pin, return true 
+			return 0;
+		}
+	}
+
+	// found no valid pins, return false
+	return -1;
+}
+
+int getPWMIndex(int pin) {
+	int len = sizeof(pwm_meta)/sizeof(struct PWM_pin);
+
+	for (int i = 0; i < len; i++) {
+		if (pwm_meta[i].pin_number == pin) {
+			return i;
+		}
+	}
+	// not found, returning false
+	return -1;
 }
 
 int pinMode(int pin, short mode) {
@@ -124,7 +159,64 @@ int pinMode(int pin, short mode) {
             fclose(fdirection);
             free(direction_path);
             break;
-            
+
+	} case PWMOUTPUT: {
+		if (pwm_meta == NULL) {
+			pwm_meta[0].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:0";
+        	   	pwm_meta[0].pin_number = 14;
+	       		pwm_meta[0].export_number = 0;
+			pwm_meta[0].exported = -1; // false
+		
+			pwm_meta[1].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:1";
+        	   	pwm_meta[1].pin_number = 16;
+		       	pwm_meta[1].export_number = 1;
+			pwm_meta[1].exported = -1; // false
+		
+			pwm_meta[2].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:1";
+        	   	pwm_meta[2].pin_number = 21;
+	       		pwm_meta[2].export_number = 1;
+			pwm_meta[2].exported = -1; // false
+		
+			pwm_meta[3].path = "/sys/devices/platform/ocp/48300000.epwmss/48300200.pwm/pwm/pwmchip0/pwm-0:0";
+	           	pwm_meta[3].pin_number = 22;
+		       	pwm_meta[3].export_number = 0;
+			pwm_meta[3].exported = -1; // false
+		
+			// This one isn't listed in the example docs
+			pwm_meta[4].path = "/sys/devices/platform/ocp/48303000.epwmss/48303200.pwm/pwm/pwmchip3/pwm-3:0";
+        	   	pwm_meta[4].pin_number = 42;
+		       	pwm_meta[4].export_number = 0;
+			pwm_meta[4].exported = -1; // false
+		
+			pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:1";
+        	   	pwm_meta[5].pin_number = 13;
+	       		pwm_meta[5].export_number = 1;
+			pwm_meta[5].exported = -1; // false
+		
+			pwm_meta[6].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-5:0";
+	           	pwm_meta[6].pin_number = 19;
+		       	pwm_meta[6].export_number = 0;
+			pwm_meta[6].exported = -1; // false
+		}
+
+		// get index, check if folder exists
+		int index = getPWMIndex(pin);
+		FILE* tmp = fopen(strcat(pwm_meta[index].path, "/period"), "r");
+
+		if (!tmp) {
+			// file does not exist
+			printf("Folder must be exported, but I haven't implemented this yet because I'm a moron\n");
+			printf("I should push it in the next few days, otherwise feel free to export it manually\n");
+			return -1;
+		} else if (index == 4) {
+			printf("This pin isn't implemented yet, I'd just use a different pin\n");
+			return -1;
+		}
+
+		pwm_meta[index].exported = 0;
+		fclose(tmp);
+		break;
+
         } case UNEXPORT: {
             FILE* f_unexport;
             char* unexport_path = (char *)malloc(30*sizeof(char));
@@ -201,13 +293,8 @@ int digitalRead(int pin) {
     }
     
     FILE *fvalue;
-    char* value_path = (char*) malloc(30*sizeof(char));
+    char *value_path = (char*) malloc(30*sizeof(char));
     char *value = (char*) malloc(sizeof(char));
-    
-    if (!verifyPin(pin)) {
-        printf("Invalid pin (%i)\n", pin);
-        return -1;
-    }
     
     // build file path
     strcpy(value_path, "/sys/class/gpio/gpio");
@@ -247,42 +334,78 @@ int digitalRead(int pin) {
     return -1; // shouldn't have gotten this far
 }
 
-int analogWrite(int pin, int period, int duty_cycle) {
+int analogWrite2(int pin, int period, int duty_cycle) {
 	// verify pin
-	if(!verifyPWMPin(pin)) {
+	if(verifyPWMPin(pin) != 0) {
 		printf("Invalid PWM pin\n");
 		return -1;
 	}
 
+	// translate pin to array position
+	int array_pos = getPWMIndex(pin);
+	if (array_pos == -1) {
+		printf("Unable to find pin %i metadata, perhapse you haven't exported?\n", pin);
+		return -1;
+	}
+
 	// initialize filepath variabiles
-	
+	FILE *fperiod, *fduty_cycle, *fenable;
+	char *period_path =	(char*) malloc(90*sizeof(char));
+	char *duty_cycle_path = (char*) malloc(90*sizeof(char));
+	char *enable_path =	(char*) malloc(90*sizeof(char));
 
 	// build file path
-	
+	strcpy(period_path, pwm_meta[array_pos].path);
+	strcat(period_path, "/period");
 
-	// ensure files exist by opening them
+	strcpy(duty_cycle_path, pwm_meta[array_pos].path);
+	strcat(duty_cycle_path, "/duty_cycle");
 	
+	strcpy(enable_path, pwm_meta[array_pos].path);
+	strcat(enable_path, "/enable");
+	
+	// ensure files exist by opening them
+	if (fopen(pwm_meta[array_pos].path, "r") == NULL) {
+		// file not exported
+		printf("Pin %i not exported\n", pin);
+		return -1;
+	}
+
+	fperiod = fopen(period_path, "w");
+	fduty_cycle = fopen(duty_cycle_path, "w");
+	fenable = fopen(enable_path, "w");
 
 	// write period and duty_cycle
+	if (fperiod != NULL) {
+		fputs(itostr(period), fperiod);
+	} else {
+		printf("Period is unreachable at addr %s\n", period_path);
+	}
+
+	if (fduty_cycle != NULL) {
+		fputs(itostr(duty_cycle), fduty_cycle);
+	} else {
+		printf("Duty cycle at pin %i is unreachable at addr %s\n", pin, duty_cycle_path);
+	}
 	
+	if (fenable != NULL) {
+		fputs("1", fenable);
+	} else {
+		printf("Unable to enable pin %i at path %s\n", pin, enable_path);
+	}
 
 	// close files and free memory
+	fclose(fperiod);
+	fclose(fduty_cycle);
+	fclose(fenable);
 
+	free(period_path);
+	free(duty_cycle_path);
+	free(enable_path);
 }
 
 int analogWrite(int pin, int duty_cycle) {
 	// calls full analogWrite function
-	return analogWrite(pin, 255, duty_cycle);
+	return analogWrite2(pin, 255, duty_cycle);
 }
 
-// int main() {
-    
-   // printf("Starting digitalWrite\n");
-    
-//    pinMode(67, OUTPUT);
-//    digitalWrite(67, LOW);
-    
-    //printf("Completed digitalWrite()\n");
-    
-    //return 0;
-//}

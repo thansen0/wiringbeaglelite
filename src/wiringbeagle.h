@@ -11,6 +11,7 @@
 #define INPUT 2
 #define INPUT_PULLUP 3 // NOT IMPLENTED
 #define UNEXPORT 4
+#define PWMOUTPUT 5
 
 #define HIGH 1
 #define LOW 0
@@ -55,6 +56,6 @@ int analogWrite(int pin, int duty_cycle);
 /* Sets a PWM value where you choose the period
  * and the duty cycle.
  */
-int analogWrite(int pin, int period, int duty_cycle);
+int analogWrite2(int pin, int period, int duty_cycle);
 
 #endif
