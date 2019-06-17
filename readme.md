@@ -1,10 +1,10 @@
 # WiringBeagle Lite
 
-Despite it's popularity and age, I wasn't able to find an easy to use GPIO for the beaglebone, so wrote my own. This would probably work on a lot of debian-based boards with GPIO pins (including raspberry pi) however I haven't tested it with them.
+Despite it's popularity and age, I wasn't able to find an easy to use GPIO for the beaglebone, so wrote my own. This project is intended to to be a stand-alone file and require no additional package instalations other than default C.
 
 ## What this is not
 
-This is not a fully-fledged GPIO library, nor does it give you deep insight into GPIO functionality or useability. If you're hoping it'll be like wiringpi for beaglebone you're going to be super dissapointed. It also isn't going to be super fast, so if you're trying to change the pin readings at a high rate of speed it won't work either.
+This is not a fully-fledged GPIO library, nor does it give you deep insight into GPIO functionality or useability. If you're hoping it'll be as exceptionally capable as wiringpi for beaglebone you're going to be dissapointed. This project simply writes to the hardware overlays, so if you're trying to change the pin readings at a high rate of speed you may encounter difficulties as well.
 
 ## What this is
 
@@ -12,11 +12,15 @@ This library is meant to be reminiscent of Arduino GPIO interaction, meaning it 
 
 My goal with this code is just to save people the few hours it takes to learn what GPIO pins are and get them running, as well as make this familiar to people who have used Arduino in the past.
 
+## What's coming
+
+I'm currently adding PWM functionality. The functionality is designed to work with post-linux kernel 4.14, as beagblebone changed the implementation, breaking many of the currentPWM libraries. This functionality isn't quite finished, as pin 42 won't work and I'm still having tenative issues with a few pins. PWM functions are in this current version however it should be fully up and running in the next week or two.
+
 ## How to install it
 
 There are no libraries to install, since this is just two files. Just add the files to your working directory and include the header `#include "wiringbeagle.h"`. That should be it. 
 
-## How to use it 
+## How to use the GPIO pins
 
 The libraries are set up the same as with Arduio. You need to initialize the pin with `pinMode(int pin, int mode)`, where `mode` is either `OUTPUT`, `INPUT`, `INPUT\_PULLUP`, or `UNEXPORT`. Each of these nodes initialize the GPIO pin and set the direction to their respective terms with the exception of `UNEXPORT`. This isn't available in arduino and it essentially turns off the pin and deletes the file structure. You don't have to do this after closing the program, since the OS will unexport them all when it reboots and there's nothing wrong with just leaving the pin unexported in the first place. If you don't know what it means to unexport it you probably don't have to worry about it.
 
@@ -47,3 +51,28 @@ int main() {
 }
 
 ```
+
+## How to use the PWM pins (unfinished!)
+
+The PWM pins also work in a similar mannar to arduino boards. The user must export the pin first using `pinMode(pin, PWMOUTPUT)`, and then they may using `analogWrite(pin, duty_cycle)`, which is out of a period of 255.
+
+There is a second function added, analogWrite2(pin, period, duty\_cycle) (named as such since basic C doesn't allow overloading) which allows you to set the period as well as duty\_cycle. Both return -1 if the function has an error.
+
+```
+
+int main() {
+	
+	int pwm_pin = 14;
+
+	pinMode(pwm_pin, PWMOUTPUT);
+
+	int er = analogWrite(pwm_pin, 127);
+
+	if (er < 0) {
+		printf("Unable to enable pwm pin %i\n", pwm_pin);
+	}
+
+}
+
+```
+
