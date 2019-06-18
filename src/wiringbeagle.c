@@ -3,7 +3,7 @@
  * Created By Thomas Hansen
  *
  */
-
+#include "string.h"
 #include "wiringbeagle.h"
 
 struct PWM_pin {
@@ -14,7 +14,7 @@ struct PWM_pin {
 };
 
 // Define in a function
-struct PWM_pin pwm_meta[7];
+struct PWM_pin pwm_meta[6];
 
 char* itostr(int n) {
     // assumes value is smaller than 1000
@@ -163,7 +163,7 @@ int pinMode(int pin, short mode) {
             break;
 
         } case PWMOUTPUT: {
-            if (pwm_meta == NULL) {
+            if (pwm_meta[0].path == NULL) {
                 pwm_meta[0].path = "/sys/devices/platform/ocp/48302000.epwmss/48302200.pwm/pwm/pwmchip2/pwm-2:0";
                 pwm_meta[0].pin_number = 14;
                 pwm_meta[0].export_number = 0;
@@ -184,12 +184,12 @@ int pinMode(int pin, short mode) {
                 pwm_meta[3].export_number = 0;
                 pwm_meta[3].exported = -1;
             
-                pwm_meta[4].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-4:1";
+                pwm_meta[4].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip4/pwm-4:1";
                 pwm_meta[4].pin_number = 13;
                 pwm_meta[4].export_number = 1;
                 pwm_meta[4].exported = -1;
             
-                pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip5/pwm-4:0";
+                pwm_meta[5].path = "/sys/devices/platform/ocp/48304000.epwmss/48304200.pwm/pwm/pwmchip4/pwm-4:0";
                 pwm_meta[5].pin_number = 19;
                 pwm_meta[5].export_number = 0;
                 pwm_meta[5].exported = -1;
@@ -197,20 +197,21 @@ int pinMode(int pin, short mode) {
 
             // get index, check if folder exists
             int index = getPWMIndex(pin);
-            FILE* tmp = fopen(strcat(pwm_meta[index].path, "/period"), "r");
+            char tmp_str[100];
+			strcpy(tmp_str, pwm_meta[index].path);
+			strcat(tmp_str, "/period");
+			
+			FILE* tmp = fopen(tmp_str, "r");
 
             if (!tmp) {
                 // file does not exist
                 printf("Folder must be exported, but I haven't implemented this yet because I'm a moron\n");
                 printf("I should push it in the next few days, otherwise feel free to export it manually\n");
                 return -1;
-            } else if (index == 4) {
-                printf("This pin isn't implemented yet, I'd just use a different pin\n");
-                return -1;
-            }
+			}
 
             pwm_meta[index].exported = 0;
-            fclose(tmp);
+			fclose(tmp);
             break;
 
         } case UNEXPORT: {
@@ -288,8 +289,8 @@ int digitalRead(int pin) {
     }
     
     FILE *fvalue;
-    char *value_path = (char*) malloc(30*sizeof(char));
-    char *value = (char*) malloc(sizeof(char));
+    char *value_path =	(char*) malloc(30*sizeof(char));
+    char *value =		(char*) malloc(sizeof(char));
     
     // build file path
     strcpy(value_path, "/sys/class/gpio/gpio");
@@ -345,9 +346,9 @@ int analogWrite2(int pin, int period, int duty_cycle) {
 
 	// initialize filepath variabiles
 	FILE *fperiod, *fduty_cycle, *fenable;
-	char *period_path =	(char*) malloc(90*sizeof(char));
+	char *period_path =		(char*) malloc(90*sizeof(char));
 	char *duty_cycle_path = (char*) malloc(90*sizeof(char));
-	char *enable_path =	(char*) malloc(90*sizeof(char));
+	char *enable_path =		(char*) malloc(90*sizeof(char));
 
 	// build file path
 	strcpy(period_path, pwm_meta[array_pos].path);
@@ -365,7 +366,7 @@ int analogWrite2(int pin, int period, int duty_cycle) {
 		printf("Pin %i not exported\n", pin);
 		return -1;
 	}
-
+	
 	fperiod = fopen(period_path, "w");
 	fduty_cycle = fopen(duty_cycle_path, "w");
 	fenable = fopen(enable_path, "w");

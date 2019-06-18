@@ -7,7 +7,7 @@
 #include "src/wiringbeagle.h"
 
 int main() {
-	int i;
+	/*int i;
 	int pin = 67;
 	i = pinMode(pin, OUTPUT);
 	
@@ -34,10 +34,10 @@ int main() {
 	printf("digitalRead in is 0: %i\n", in);
 
 	pinMode(pin, UNEXPORT);
+*/
+	printf("Modifying PWM pins now\n");
 
-	printf("Modifying PWM pins now");
-
-	int pwm = 14;
+	int pwm = 19;
 	pinMode(pwm, PWMOUTPUT);
 
 	analogWrite(pwm, 127);
