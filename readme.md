@@ -1,16 +1,16 @@
 # WiringBeagle Lite
 
-Despite its popularity and age, I wasn't able to find an easy to use GPIO for the beaglebone, so wrote my own. This project is intended to be a stand-alone file and require no additional package installations other than default C.
+Despite its popularity and age, I wasn't able to find an easy to use GPIO or PWM library for the beaglebone that was updated for kernel 4.14, so wrote my own. This project is intended to be a stand-alone file and require no additional package installations other than default C.
 
 ## What this is
 
-This library is meant to be reminiscent of Arduino GPIO and PWM interaction, meaning it has a pinMode(), digitalWrite(), and digitalRead() function. It's meant to be self-contained in a single .c and .h file, and it's meant to be easily modified if the user wants to add functionality or modify functionality in some way. It's also very portable, meaning this library would probably work on most debian-based boards, but again I haven't tested it there.
+This library is meant to be reminiscent of Arduino GPIO and PWM interaction, meaning it has a pinMode(), digitalWrite(), and digitalRead() function. It's meant to be self-contained in a single .c and .h file, and it's meant to be easily modified if the user wants to add functionality or modify functionality in some way.
 
 My goal with this code is just to save people the few hours it takes to learn what GPIO pins are and get them running, as well as make this familiar to people who have used Arduino in the past.
 
-## What's coming
+## What's coming/not implemented
 
-I'm currently adding PWM functionality, it should be done except for pin 42, which uses some different hardward overlay than the rest of the pins, and it's not immediately apparent how that overlay works. The rest of the pins should work with any beaglebone using a kernel version after 4.14.
+PWM pin 42 uses some different hardward overlay than the rest of the pins, and it's not immediately apparent how that overlay works. The rest of the pins should work with any beaglebone using a kernel version after 4.14. I may add this pin at a later date however currently it's not implemented like the rest of the pins are.
 
 ## How to install it
 
