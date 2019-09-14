@@ -398,6 +398,8 @@ int analogWrite2(int pin, int period, int duty_cycle) {
 	free(period_path);
 	free(duty_cycle_path);
 	free(enable_path);
+
+    return 0;
 }
 
 int analogWrite(int pin, int duty_cycle) {
