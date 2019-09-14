@@ -6,8 +6,8 @@
 #include <unistd.h> // sleep function
 #include "src/wiringbeagle.h"
 
-int main() {
-	/*int i;
+void modify_GPIO_pin() {
+	int i;
 	int pin = 67;
 	i = pinMode(pin, OUTPUT);
 	
@@ -31,24 +31,43 @@ int main() {
 
 	int in = digitalRead(pin);
 
-	printf("digitalRead in is 0: %i\n", in);
+	printf("digitalRead in should be 0: %i\n", in);
 
 	pinMode(pin, UNEXPORT);
-*/
-	printf("Modifying PWM pins now\n");
+}
+
+void modify_PWM_pin() {
+	printf("Modifying PWM pins\n");
 
 	int pwm = 19;
+	// ensures pin is initialized, BBB often initializes them by
+	// default but this is still good practice
 	pinMode(pwm, PWMOUTPUT);
 
+	// writes PWM signal to be about half on, 127/255
 	analogWrite(pwm, 127);
 
 	sleep(3);
 
+	// sets PWM all the way on
 	analogWrite(pwm, 255);
 
 	sleep(3);
 
+	// turns PWM off
 	analogWrite(pwm, 0);
 
+	// we don't want to unexport the pins, as that can cause 
+	// issues until reboot
+
 	sleep(1);
+}
+
+int main() {
+
+	modify_GPIO_pin();
+
+	modify_PWM_pin();
+
+	return 0;
 }
